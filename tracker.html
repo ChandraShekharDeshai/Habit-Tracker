@@ -102,6 +102,13 @@
       background-color: greenyellow;
     }
 
+    input[type="time"] {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 4px;
+      font-size: 14px;
+    }
+
     .rankings,
     .highlights {
       max-width: 800px;
@@ -205,6 +212,11 @@
     </div>
   </div>
 
+  <div id="suggestion-report" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 5px solid #4CAF50; border-radius: 8px;">
+    <strong>Suggestions Report:</strong>
+    <div id="report-content" style="margin-top: 10px;"></div>
+  </div>
+
   <script>
     const habits = ['Meditation', 'Exercise', 'Reading'];
     let currentMonth = 3; // April (0-indexed)
@@ -239,13 +251,27 @@
         tableHTML += '</tr>';
       });
 
-      tableHTML += '</tbody>';
+      tableHTML += `<tr><td class="habit-name">🌞 Wake-Up Time</td>`;
+      for (let d = 1; d <= days; d++) {
+        const inputId = `wakeup_${currentYear}_${currentMonth}_${d}`;
+        const storedTime = localStorage.getItem(inputId) || '';
+        tableHTML += `<td><input type="time" id="${inputId}" value="${storedTime}" style="width: 80px;"></td>`;
+      }
+      tableHTML += '</tr></tbody>';
+
       habitTable.innerHTML = tableHTML;
 
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
           localStorage.setItem(cb.id, cb.checked);
           calculatePerformance();
+        });
+      });
+
+      document.querySelectorAll('input[type="time"]').forEach(input => {
+        input.addEventListener('change', () => {
+          localStorage.setItem(input.id, input.value);
+          calculatePerformance(); // optional: re-analyze on wake-up change
         });
       });
 
@@ -290,6 +316,60 @@
         row.insertCell(1).innerText = r.performance.toFixed(2) + '%';
         row.insertCell(2).innerText = r.rank;
       });
+
+      generateSuggestions(rankings); // 🔥 This line ensures suggestions show up
+    }
+
+    function generateSuggestions(rankings) {
+      const suggestions = [];
+
+      rankings.forEach(r => {
+        if (r.rank === 'S') {
+          suggestions.push(`🌟 Excellent work on <strong>${r.habit}</strong>! Keep up the streak.`);
+        } else if (r.rank === 'A' || r.rank === 'B') {
+          suggestions.push(`✅ You're doing well with <strong>${r.habit}</strong>. Try to push for daily consistency!`);
+        } else {
+          suggestions.push(`⚠️ <strong>${r.habit}</strong> needs attention. Consider setting reminders or breaking it into smaller steps.`);
+        }
+      });
+
+      const days = daysInMonth(currentMonth, currentYear);
+      let totalMinutes = 0;
+      let count = 0;
+      let earlyCount = 0;
+
+      for (let d = 1; d <= days; d++) {
+        const id = `wakeup_${currentYear}_${currentMonth}_${d}`;
+        const value = localStorage.getItem(id);
+        if (value) {
+          const [hours, mins] = value.split(":").map(Number);
+          const minutes = hours * 60 + mins;
+          totalMinutes += minutes;
+          count++;
+          if (hours < 7 || (hours === 7 && mins <= 30)) earlyCount++;
+        }
+      }
+
+      if (count > 0) {
+        const avgMinutes = totalMinutes / count;
+        const avgHour = Math.floor(avgMinutes / 60);
+        const avgMin = Math.round(avgMinutes % 60);
+        const formattedAvg = `${avgHour.toString().padStart(2, '0')}:${avgMin.toString().padStart(2, '0')}`;
+
+        suggestions.push(`🕓 Your average wake-up time this month is <strong>${formattedAvg}</strong>.`);
+
+        if (earlyCount / count >= 0.7) {
+          suggestions.push("🌄 You're waking up early most days — great job maintaining discipline!");
+        } else if (earlyCount / count <= 0.3) {
+          suggestions.push("😴 Consider adjusting your sleep schedule to wake up earlier for a more productive start.");
+        } else {
+          suggestions.push("📈 Your wake-up time varies — try to establish a more consistent routine.");
+        }
+      } else {
+        suggestions.push("⏰ No wake-up data found. Start tracking your wake-up times to get suggestions!");
+      }
+
+      document.getElementById("report-content").innerHTML = suggestions.map(s => `<p>${s}</p>`).join('');
     }
 
     function changeMonth(delta) {
