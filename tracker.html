@@ -14,20 +14,10 @@
       padding: 20px;
     }
 
-    h1 {
+    h1, h2 {
       text-align: center;
       color: #1B4332;
       font-family: 'Prompt', sans-serif;
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #1B4332;
-      font-family: 'Prompt', sans-serif;
-      font-size: 1.5rem;
-      margin-top: 40px;
     }
 
     .controls {
@@ -43,7 +33,7 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
-      margin: 0 10px;
+      margin: 5px;
     }
 
     .scroll-x {
@@ -60,8 +50,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    .tracker th,
-    .tracker td {
+    .tracker th, .tracker td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
@@ -109,8 +98,7 @@
       font-size: 14px;
     }
 
-    .rankings,
-    .highlights {
+    .rankings, .highlights {
       max-width: 800px;
       margin: 0 auto;
     }
@@ -120,8 +108,7 @@
       border-collapse: collapse;
     }
 
-    .rankings th,
-    .rankings td {
+    .rankings th, .rankings td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
@@ -141,326 +128,299 @@
       font-size: 16px;
       margin-top: 10px;
     }
-    body.dark-mode {
-      background: #121212;
-      color: #e0f2e9;
-    }
 
-    body.dark-mode h1,
-    body.dark-mode h2 {
-      color: #b5f3cd;
+    #suggestion-report {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
     }
-
-    body.dark-mode .tracker {
-      background: #1e1e1e;
-      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    input[type="text"], select {
+    border-radius: 20px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    font-size: 16px;
     }
-
-    body.dark-mode .tracker th {
-      background-color: #2e7d32;
-      color: #fff;
-    }
-
-    body.dark-mode .habit-name {
-      background: #2b2b2b;
-      color: #fff;
-    }
-
-    body.dark-mode label {
-      background-color: #800;
-    }
-
-    body.dark-mode input[type="checkbox"]:checked + label {
-      background-color: #8bc34a;
-    }
-
-    body.dark-mode .rankings th {
-      background-color: #2e7d32;
-    }
-
-    body.dark-mode .rankings td {
-      background-color: #2a2a2a;
-      color: #fff;
-    }
-
-    body.dark-mode .highlights textarea {
-      background-color: #2a2a2a;
-      color: #eee;
-      border: 1px solid #555;
-    }
-
-    body.dark-mode #suggestion-report {
-      background: #1c1c1c;
-      color: #ccc;
-      border-left-color: #81c784;
-    }
-
     @media (max-width: 600px) {
-  body {
-    margin: 0;
-    padding: 0;
-  }
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  .page-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    text-align: center;
-  }
+      .page-content {
+        padding: 20px;
+      }
 
-  .scroll-x {
-    width: 100%;
-  }
+      .controls {
+        flex-direction: column;
+        gap: 10px;
+      }
 
-  .tracker {
-    width: 100%;
-  }
-
-  .controls {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .controls button {
-    margin: 5px 0;
-    width: 100%;
-  }
-
-  .highlights textarea {
-    height: 100px;
-  }
-
-  /* #suggestion-report {
-    margin: 10px;
-    padding: 10px;
-    font-size: 14px;
-    line-height: 1.4;
-    border-left: 4px solid #4CAF50;
-  } */
-
-  #report-content p {
-    margin: 6px 0;
-    font-size: 10px;
-  }
-}
-
-
+      .controls button, .controls input, .controls select {
+        margin: 5px 0;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  
-  <div class="page-content">
-    <h1 id="month-title">✯Habit Tracker - April 2025✯</h1>
 
-    <div class="controls">
-      <button onclick="changeMonth(-1)">Previous Month</button>
-      <button onclick="changeMonth(1)">Next Month</button>
-      <button onclick="resetTracker()">Reset All Data</button>
-    </div>
+<div class="page-content">
+  <h1 id="month-title">✯Habit Tracker - April 2025✯</h1>
 
-    <div class="scroll-x">
-      <table class="tracker" id="habit-table"></table>
-    </div>
+  <div class="controls">
+    <button onclick="changeMonth(-1)">Previous Month</button>
+    <button onclick="changeMonth(1)">Next Month</button>
+    <button onclick="resetTracker()">Reset All Data</button>
+    <br><br>
+    <input type="text" id="new-habit" placeholder="New habit name">
+    <button onclick="addHabit()">Add Habit</button>
 
-    <h2>Habit Rankings</h2>
-    <div class="rankings">
-      <table id="rankings-table">
-        <thead>
-          <tr><th>Habit</th><th>Performance %</th><th>Rank</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <h2>Monthly Highlights</h2>
-    <div class="highlights">
-      <textarea placeholder="Write your wins, lessons, or standout moments here..."></textarea>
-    </div>
+    <select id="delete-habit-dropdown">
+      <option value="">-- Select habit to delete --</option>
+    </select>
+    <button onclick="deleteHabit()">Delete</button>
   </div>
 
-  <div id="suggestion-report" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 5px solid #4CAF50; border-radius: 8px;">
-    <!-- <strong>Suggestions Report:</strong> -->
-    <div id="report-content" style="margin-top: 10px;"></div>
+  <div class="scroll-x">
+    <table class="tracker" id="habit-table"></table>
   </div>
 
-  <script>
-    const habits = ['Meditation', 'Exercise', 'Reading'];
-    let currentMonth = 3; // April (0-indexed)
-    let currentYear = 2025;
+  <h2>🏆Habit Rankings🏆</h2>
+  <div class="rankings">
+    <table id="rankings-table">
+      <thead>
+        <tr><th>Habit</th><th>Performance %</th><th>Rank</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-    function daysInMonth(month, year) {
-      return new Date(year, month + 1, 0).getDate();
+  <h2>✒️Monthly Highlights✒️</h2>
+  <div class="highlights">
+    <textarea placeholder="Write your wins, lessons, or standout moments here..."></textarea>
+  </div>
+
+  <div id="suggestion-report">
+    <div id="report-content"></div>
+  </div>
+</div>
+
+<script>
+  let habits = JSON.parse(localStorage.getItem("habit-list")) || ['Meditation', 'Exercise', 'Reading'];
+  let currentMonth = 3;
+  let currentYear = 2025;
+
+  function saveHabits() {
+    localStorage.setItem("habit-list", JSON.stringify(habits));
+  }
+
+  function updateDeleteDropdown() {
+    const dropdown = document.getElementById("delete-habit-dropdown");
+    dropdown.innerHTML = '<option value="">-- Select habit to delete --</option>';
+    habits.forEach(habit => {
+      const option = document.createElement("option");
+      option.value = habit;
+      option.textContent = habit;
+      dropdown.appendChild(option);
+    });
+  }
+
+  function addHabit() {
+    const input = document.getElementById("new-habit");
+    const newHabit = input.value.trim();
+    if (!newHabit) return alert("Enter a valid habit name.");
+    if (habits.includes(newHabit)) return alert("Habit already exists.");
+
+    habits.push(newHabit);
+    saveHabits();
+    input.value = '';
+    renderTable();
+    updateDeleteDropdown();
+  }
+
+  function deleteHabit() {
+    const dropdown = document.getElementById("delete-habit-dropdown");
+    const habitToDelete = dropdown.value;
+    if (!habitToDelete) return alert("Select a habit to delete.");
+    if (confirm(`Delete habit "${habitToDelete}"?`)) {
+      habits = habits.filter(h => h !== habitToDelete);
+      saveHabits();
+      renderTable();
+      updateDeleteDropdown();
     }
+  }
 
-    function renderTable() {
-      const habitTable = document.getElementById('habit-table');
-      const monthTitle = document.getElementById('month-title');
-      const monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"];
+  function daysInMonth(month, year) {
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  function renderTable() {
+    const habitTable = document.getElementById('habit-table');
+    const monthTitle = document.getElementById('month-title');
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+    const days = daysInMonth(currentMonth, currentYear);
+    monthTitle.textContent = `✯Habit Tracker - ${monthNames[currentMonth]} ${currentYear}✯`;
+
+    let tableHTML = '<thead><tr><th>Habit</th>';
+    for (let d = 1; d <= days; d++) {
+      tableHTML += `<th>${d}</th>`;
+    }
+    tableHTML += '</tr></thead><tbody>';
+
+    habits.forEach(habit => {
+      const id = habit.toLowerCase().replace(/\s+/g, '');
+      tableHTML += `<tr><td class="habit-name">${habit}</td>`;
+      for (let d = 1; d <= days; d++) {
+        const boxId = `${id}_${currentYear}_${currentMonth}_${d}`;
+        const isChecked = localStorage.getItem(boxId) === 'true';
+        tableHTML += `<td><input type="checkbox" id="${boxId}" ${isChecked ? 'checked' : ''}><label for="${boxId}"></label></td>`;
+      }
+      tableHTML += '</tr>';
+    });
+
+    tableHTML += `<tr><td class="habit-name">🌞 Wake-Up Time</td>`;
+    for (let d = 1; d <= days; d++) {
+      const inputId = `wakeup_${currentYear}_${currentMonth}_${d}`;
+      const storedTime = localStorage.getItem(inputId) || '';
+      tableHTML += `<td><input type="time" id="${inputId}" value="${storedTime}" style="width: 80px;"></td>`;
+    }
+    tableHTML += '</tr></tbody>';
+
+    habitTable.innerHTML = tableHTML;
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        localStorage.setItem(cb.id, cb.checked);
+        calculatePerformance();
+      });
+    });
+
+    document.querySelectorAll('input[type="time"]').forEach(input => {
+      input.addEventListener('change', () => {
+        localStorage.setItem(input.id, input.value);
+        calculatePerformance();
+      });
+    });
+
+    calculatePerformance();
+    updateDeleteDropdown();
+  }
+
+  function calculatePerformance() {
+    const rankings = [];
+    habits.forEach(habit => {
+      let checked = 0;
+      let streak = 0;
+      let maxStreak = 0;
+      const id = habit.toLowerCase().replace(/\s+/g, '');
       const days = daysInMonth(currentMonth, currentYear);
-      monthTitle.textContent = `✯Habit Tracker - ${monthNames[currentMonth]} ${currentYear}✯`;
 
-      let tableHTML = '<thead><tr><th>Habit</th>';
       for (let d = 1; d <= days; d++) {
-        tableHTML += `<th>${d}</th>`;
-      }
-      tableHTML += '</tr></thead><tbody>';
-
-      habits.forEach(habit => {
-        const id = habit.toLowerCase();
-        tableHTML += `<tr><td class="habit-name">${habit}</td>`;
-        for (let d = 1; d <= days; d++) {
-          const boxId = `${id}_${currentYear}_${currentMonth}_${d}`;
-          const isChecked = localStorage.getItem(boxId) === 'true';
-          tableHTML += `<td><input type="checkbox" id="${boxId}" ${isChecked ? 'checked' : ''}><label for="${boxId}"></label></td>`;
-        }
-        tableHTML += '</tr>';
-      });
-
-      tableHTML += `<tr><td class="habit-name">🌞 Wake-Up Time</td>`;
-      for (let d = 1; d <= days; d++) {
-        const inputId = `wakeup_${currentYear}_${currentMonth}_${d}`;
-        const storedTime = localStorage.getItem(inputId) || '';
-        tableHTML += `<td><input type="time" id="${inputId}" value="${storedTime}" style="width: 80px;"></td>`;
-      }
-      tableHTML += '</tr></tbody>';
-
-      habitTable.innerHTML = tableHTML;
-
-      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.addEventListener('change', () => {
-          localStorage.setItem(cb.id, cb.checked);
-          calculatePerformance();
-        });
-      });
-
-      document.querySelectorAll('input[type="time"]').forEach(input => {
-        input.addEventListener('change', () => {
-          localStorage.setItem(input.id, input.value);
-          calculatePerformance(); // optional: re-analyze on wake-up change
-        });
-      });
-
-      calculatePerformance();
-    }
-
-    function calculatePerformance() {
-      const rankings = [];
-      habits.forEach(habit => {
-        let checked = 0;
-        let streak = 0;
-        let maxStreak = 0;
-        const id = habit.toLowerCase();
-        const days = daysInMonth(currentMonth, currentYear);
-
-        for (let d = 1; d <= days; d++) {
-          const cb = document.getElementById(`${id}_${currentYear}_${currentMonth}_${d}`);
-          if (cb?.checked) {
-            checked++;
-            streak++;
-            maxStreak = Math.max(streak, maxStreak);
-          } else {
-            streak = 0;
-          }
-        }
-
-        const performance = (checked / days) * 100;
-        const rank = performance >= 90 ? 'S' :
-                     performance >= 75 ? 'A' :
-                     performance >= 50 ? 'B' :
-                     performance >= 25 ? 'C' : 'D';
-
-        rankings.push({ habit, performance, rank });
-      });
-
-      rankings.sort((a, b) => b.performance - a.performance);
-      const tbody = document.getElementById('rankings-table').getElementsByTagName('tbody')[0];
-      tbody.innerHTML = '';
-      rankings.forEach(r => {
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = r.habit;
-        row.insertCell(1).innerText = r.performance.toFixed(2) + '%';
-        row.insertCell(2).innerText = r.rank;
-      });
-
-      generateSuggestions(rankings); // 🔥 This line ensures suggestions show up
-    }
-
-    function generateSuggestions(rankings) {
-      const suggestions = [];
-
-      rankings.forEach(r => {
-        if (r.rank === 'S') {
-          suggestions.push(`🌟 Excellent work on <strong>${r.habit}</strong>! Keep up the streak.`);
-        } else if (r.rank === 'A' || r.rank === 'B') {
-          suggestions.push(`✅ You're doing well with <strong>${r.habit}</strong>. Try to push for daily consistency!`);
+        const cb = document.getElementById(`${id}_${currentYear}_${currentMonth}_${d}`);
+        if (cb?.checked) {
+          checked++;
+          streak++;
+          maxStreak = Math.max(streak, maxStreak);
         } else {
-          suggestions.push(`⚠️ <strong>${r.habit}</strong> needs attention. Consider setting reminders or breaking it into smaller steps.`);
-        }
-      });
-
-      const days = daysInMonth(currentMonth, currentYear);
-      let totalMinutes = 0;
-      let count = 0;
-      let earlyCount = 0;
-
-      for (let d = 1; d <= days; d++) {
-        const id = `wakeup_${currentYear}_${currentMonth}_${d}`;
-        const value = localStorage.getItem(id);
-        if (value) {
-          const [hours, mins] = value.split(":").map(Number);
-          const minutes = hours * 60 + mins;
-          totalMinutes += minutes;
-          count++;
-          if (hours < 7 || (hours === 7 && mins <= 30)) earlyCount++;
+          streak = 0;
         }
       }
 
-      if (count > 0) {
-        const avgMinutes = totalMinutes / count;
-        const avgHour = Math.floor(avgMinutes / 60);
-        const avgMin = Math.round(avgMinutes % 60);
-        const formattedAvg = `${avgHour.toString().padStart(2, '0')}:${avgMin.toString().padStart(2, '0')}`;
+      const performance = (checked / days) * 100;
+      const rank = performance >= 90 ? 'S' :
+                   performance >= 75 ? 'A' :
+                   performance >= 50 ? 'B' :
+                   performance >= 25 ? 'C' : 'D';
 
-        suggestions.push(`🕓 Your average wake-up time this month is <strong>${formattedAvg}</strong>.`);
+      rankings.push({ habit, performance, rank });
+    });
 
-        if (earlyCount / count >= 0.7) {
-          suggestions.push("🌄 You're waking up early most days — great job maintaining discipline!");
-        } else if (earlyCount / count <= 0.3) {
-          suggestions.push("😴 Consider adjusting your sleep schedule to wake up earlier for a more productive start.");
-        } else {
-          suggestions.push("📈 Your wake-up time varies — try to establish a more consistent routine.");
-        }
+    rankings.sort((a, b) => b.performance - a.performance);
+    const tbody = document.getElementById('rankings-table').getElementsByTagName('tbody')[0];
+    tbody.innerHTML = '';
+    rankings.forEach(r => {
+      const row = tbody.insertRow();
+      row.insertCell(0).innerText = r.habit;
+      row.insertCell(1).innerText = r.performance.toFixed(2) + '%';
+      row.insertCell(2).innerText = r.rank;
+    });
+
+    generateSuggestions(rankings);
+  }
+
+  function generateSuggestions(rankings) {
+    const suggestions = [];
+
+    rankings.forEach(r => {
+      if (r.rank === 'S') {
+        suggestions.push(`🌟 Excellent work on <strong>${r.habit}</strong>! Keep up the streak.`);
+      } else if (r.rank === 'A' || r.rank === 'B') {
+        suggestions.push(`✅ You're doing well with <strong>${r.habit}</strong>. Try to push for daily consistency!`);
       } else {
-        suggestions.push("⏰ No wake-up data found. Start tracking your wake-up times to get suggestions!");
+        suggestions.push(`⚠️ <strong>${r.habit}</strong> needs attention. Consider setting reminders or breaking it into smaller steps.`);
       }
+    });
 
-      document.getElementById("report-content").innerHTML = suggestions.map(s => `<p>${s}</p>`).join('');
+    const days = daysInMonth(currentMonth, currentYear);
+    let totalMinutes = 0, count = 0, earlyCount = 0;
+
+    for (let d = 1; d <= days; d++) {
+      const id = `wakeup_${currentYear}_${currentMonth}_${d}`;
+      const value = localStorage.getItem(id);
+      if (value) {
+        const [hours, mins] = value.split(":").map(Number);
+        const minutes = hours * 60 + mins;
+        totalMinutes += minutes;
+        count++;
+        if (hours < 7 || (hours === 7 && mins <= 30)) earlyCount++;
+      }
     }
 
-    function changeMonth(delta) {
-      currentMonth += delta;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      } else if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
+    if (count > 0) {
+      const avgMinutes = totalMinutes / count;
+      const avgHour = Math.floor(avgMinutes / 60);
+      const avgMin = Math.round(avgMinutes % 60);
+      const formattedAvg = `${avgHour.toString().padStart(2, '0')}:${avgMin.toString().padStart(2, '0')}`;
+      suggestions.push(`🕓 Your average wake-up time this month is <strong>${formattedAvg}</strong>.`);
+      if (earlyCount / count >= 0.7) {
+        suggestions.push("🌄 You're waking up early most days — great job maintaining discipline!");
+      } else if (earlyCount / count <= 0.3) {
+        suggestions.push("😴 Consider adjusting your sleep schedule to wake up earlier for a more productive start.");
+      } else {
+        suggestions.push("📈 Your wake-up time varies — try to establish a more consistent routine.");
       }
+    } else {
+      suggestions.push("⏰ No wake-up data found. Start tracking your wake-up times to get suggestions!");
+    }
+
+    document.getElementById("report-content").innerHTML = suggestions.map(s => `<p>${s}</p>`).join('');
+  }
+
+  function changeMonth(delta) {
+    currentMonth += delta;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    } else if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderTable();
+  }
+
+  function resetTracker() {
+    if (confirm("Are you sure you want to reset all tracked data?")) {
+      localStorage.clear();
+      habits = ['Meditation', 'Exercise', 'Reading'];
+      saveHabits();
       renderTable();
     }
+  }
 
-    function resetTracker() {
-      if (confirm("Are you sure you want to reset all tracked data?")) {
-        localStorage.clear();
-        renderTable();
-      }
-    }
-
-    window.onload = renderTable;
-  </script>
+  window.onload = renderTable;
+</script>
 </body>
 </html>
