@@ -19,7 +19,7 @@
     <div class="content-wrapper">
         <main class="mainpage">
             <div class="maintext">
-                <span class="maintext1">Hey, welcome to Habit Tracker!</span>
+                <span class="maintext1" id="welcomeText">Hey, welcome to Habit Tracker!</span>
                 <span class="maintext2">Smash those goals and make good habits fun!</span>
             </div>
         </main>
@@ -38,5 +38,35 @@
         </div>
     </div>
 </body>
+<script>
+    const startBtn = document.querySelector('.start');
+    const welcomeText = document.getElementById('welcomeText');
+
+    // Check if name already exists
+    const username = localStorage.getItem('username');
+    if (username) {
+        welcomeText.textContent = `Hey ${username}, welcome to Habit Tracker!`;
+    }
+
+    // Ask for name when Start Tracking is clicked
+    startBtn.addEventListener('click', function (e) {
+        e.preventDefault(); // prevent link from jumping immediately
+
+        let name = localStorage.getItem('username');
+        if (!name) {
+            name = prompt("Hey buddy! What's your name? ✨👀");
+            if (name) {
+                localStorage.setItem('username', name);
+                welcomeText.textContent = `Hey ${name}, welcome to Habit Tracker!`;
+            }
+        }
+
+        // Delay navigation for better UX
+        setTimeout(() => {
+            window.location.href = "tracker.html";
+        }, 500);
+    });
+</script>
+
 
 </html>
